@@ -1,0 +1,46 @@
+import discord
+import os
+import requests
+import json
+##import random
+from replit import db
+from flash import keep_alive
+
+client = discord.Client()
+
+
+
+@client.event
+async def on_ready():
+    await client.change_presence(
+        activity=discord.Game(
+            name=
+            "Getting Ready For Tech Career Days 2021\n!help for more commands")
+    )
+    print('We have logged in as {0.user}'.format(client))
+
+
+
+@client.event
+async def on_message(message):
+  if message.author == client.user:
+    return
+
+
+    msg = message.content
+
+
+
+    if message.content.startswith("!TCD"):
+        await message.channel.send('Tech Career Days 2021\n6th January - 7th January 2021, 10am to 5pm')
+
+    if message.content.startswith("!help"):
+        await message.channel.send('using !<command> will trigger command\n\n\nAvailable list of commands:\n!TCD\n!list')
+
+    if message.content.startswith("!list"):
+      f = open("designition.txt", "r")
+      await message.channel.send(f.read())
+
+
+keep_alive()
+client.run(os.getenv('TOKEN'))

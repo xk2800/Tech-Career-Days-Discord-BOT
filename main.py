@@ -1,102 +1,62 @@
 import discord
+#from discord.ext.commands import Bot
+from discord.ext import commands
+#import asyncio
 import os
 import requests
 import json
-##import random
+import random
 from replit import db
-##from flash import keep_alive
+from flash import keep_alive
 
 client = discord.Client()
 
-sad_words = ["sad", "cry", "unhappy", "KY", "haih"]
-
-starter_encouragements = [
-"Cheer up!",
-"Chill la bro",
-"You the boss"
-]
-
-if "responding" not in db.keys():
-  db["responding"] = True
-
-def get_quote():
-  response = requests.get("https://zenquotes.io/api/random")
-  json_data = json.loads(response.text)
-  quote = json_data[0]['q'] + " -" + json_data[0]['a']
-  return(quote)
-
-def update_encouragements(encouraging_message):
-  if "encouragements" in db.keys():
-    encouragements = db["encouragements"]
-    encouragements.append(encouraging_message)
-    db["encouragements"] = encouragements
-  else:
-    db["encouragements"] = [encouraging_message]
-
-def delete_encouragment(index):
-  encouragements = db["encouragements"]
-  if len(encouragements) > index:
-    del encouragements[index]
-    db["encouragements"] = encouragements
-
 @client.event
 async def on_ready():
+  await client.change_presence(activity=discord.Game(name="Bring in Tech Career Days"))
   print('We have logged in as {0.user}'.format(client))
 
 @client.event
 async def on_message(message):
   if message.author == client.user:
     return
-
+    
   msg = message.content
 
-  if msg.startswith('$inspire'):
-    quote = get_quote()
-    await message.channel.send(quote)
 
-  ##if db["responding"]:
-    ##options = starter_encouragements
-    ##if "encouragements" in db.keys():
-      ##options = options + db["encouragements"]
+  if message.content.startswith("!TCD"):
+      await message.channel.send('**Tech Career Days 2021**\n6th January - 7th January 2021, 10am to 5pm')
 
-    ##if any(word in msg for word in sad_words):
-      ##await message.channel.send(random.choice(options))
+  if message.content.startswith("!help"):
+      await message.channel.send('using !<command> will trigger command\n\n\nAvailable list of commands:\n`!TCD`\n`!list`\n`!webteam`\n`!website`\n`!event-management`\n`!marketing`\n`!publicity`\n`!sponsorship`')
 
-  if msg.startswith("$new"):
-    encouraging_message = msg.split("$new ",1)[1]
-    update_encouragements(encouraging_message)
-    await message.channel.send("New encouraging message added.")
+  if message.content.startswith("!list"):
+      f = open("designition.txt", "r")
+      await message.channel.send(f.read())
 
-  if msg.startswith("$del"):
-    encouragements = []
-    if "encouragements" in db.keys():
-      index = int(msg.split("$del",1)[1])
-      delete_encouragment(index)
-      encouragements = db["encouragements"]
-    await message.channel.send(encouragements)
+  if message.content.startswith("!webteam"):
+      f = open("webteam.txt", "r")
+      await message.channel.send(f.read())
 
+  if message.content.startswith("!event-management"):
+      f = open("managementteam.txt", "r")
+      await message.channel.send(f.read())
 
-  if message.content.startswith("Shaun"):
-        await message.channel.send('Im am God')
+  if message.content.startswith("!marketing"):
+      f = open("marketingteam.txt", "r")
+      await message.channel.send(f.read())
 
-  if msg.startswith("$list"):
-    encouragements = []
-    if "encouragements" in db.keys():
-      encouragements = db["encouragements"]
-    await message.channel.send(encouragements)
+  if message.content.startswith("!publicity"):
+      f = open("publicityteam.txt", "r")
+      await message.channel.send(f.read())
 
-  if msg.startswith("$responding"):
-    value = msg.split("$responding ",1)[1]
+  if message.content.startswith("!sponsorship"):
+      f = open("sponsorshipteam.txt", "r")
+      await message.channel.send(f.read())
 
-    if value.lower() == "true":
-      db["responding"] = True
-      await message.channel.send("Responding is on.")
-    else:
-      db["responding"] = False
-      await message.channel.send("Responding is off.")
-
-  
-
-
-##keep_alive()
+  if message.content.startswith("!website"):
+      f = open("webteam.txt", "r")
+      await message.channel.send(f.read() + '\n\nWebsite Link : https://techcareerdays.com\nResume Portal: https://resume.techcareerdays.com/')
+      
+keep_alive()
 client.run(os.getenv('TOKEN'))
